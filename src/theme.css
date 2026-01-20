@@ -1,0 +1,51 @@
+:root {
+  /* Colores primarios FESC */
+  --fesc-primary: #a11217;
+  --fesc-primary-dark: #7d0e12;
+  --fesc-primary-light: #fce8e8;
+  --fesc-accent: #f0b429;
+
+  /* Fondos estilo Gmail */
+  --fesc-bg: #f6f8fc;
+  --fesc-surface: #ffffff;
+  --fesc-surface-hover: #f1f3f4;
+  --fesc-surface-active: #e8eaed;
+
+  /* Texto */
+  --fesc-text: #202124;
+  --fesc-text-secondary: #5f6368;
+  --fesc-muted: #80868b;
+
+  /* Bordes */
+  --fesc-border: #e0e0e0;
+  --fesc-border-light: #f0f0f0;
+
+  /* Estados */
+  --fesc-hover: #f1f3f4;
+  --fesc-selected: #e8f0fe;
+  --fesc-unread: #f2f6fc;
+
+  /* Sidebar */
+  --sidebar-width: 256px;
+  --sidebar-collapsed: 68px;
+
+  /* Topbar */
+  --topbar-height: 64px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+  --shadow-md: 0 1px 3px 0 rgba(60, 64, 67, 0.15), 0 4px 8px 3px rgba(60, 64, 67, 0.1);
+  --shadow-lg: 0 1px 3px 0 rgba(60, 64, 67, 0.2), 0 8px 16px 4px rgba(60, 64, 67, 0.15);
+
+  /* Transiciones */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* Radios */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}

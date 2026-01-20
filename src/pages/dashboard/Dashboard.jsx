@@ -1,0 +1,195 @@
+import AppShell from '../../components/layout/AppShell'
+import { useNavigate } from 'react-router-dom'
+
+// Icons
+const InboxIcon = () => (
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5v-3h3.56c.69 1.19 1.97 2 3.45 2s2.75-.81 3.45-2H19v3zm0-5h-4.99c0 1.1-.9 2-2 2s-2-.9-2-2H5V5h14v9z" />
+  </svg>
+)
+
+const PendingIcon = () => (
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" />
+  </svg>
+)
+
+const CheckIcon = () => (
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+  </svg>
+)
+
+const SendIcon = () => (
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+  </svg>
+)
+
+function StatCard({ icon: Icon, label, value, description, color, onClick }) {
+  return (
+    <div
+      className="stat-card cursor-pointer"
+      onClick={onClick}
+    >
+      <div
+        className="icon"
+        style={{ background: `${color}15`, color: color }}
+      >
+        <Icon />
+      </div>
+      <p className="label">{label}</p>
+      <p className="value">{value}</p>
+      <p className="description">{description}</p>
+    </div>
+  )
+}
+
+function QuickAction({ icon: Icon, label, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left transition-all hover:bg-[var(--fesc-hover)]"
+    >
+      <div
+        className="w-10 h-10 rounded-full flex items-center justify-center"
+        style={{ background: 'var(--fesc-primary-light)', color: 'var(--fesc-primary)' }}
+      >
+        <Icon />
+      </div>
+      <span className="font-medium" style={{ color: 'var(--fesc-text)' }}>{label}</span>
+    </button>
+  )
+}
+
+export default function Dashboard() {
+  const navigate = useNavigate()
+
+  return (
+    <AppShell>
+      <div className="p-6 max-w-6xl mx-auto">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-medium mb-2" style={{ color: 'var(--fesc-text)' }}>
+            Buenos días 👋
+          </h1>
+          <p style={{ color: 'var(--fesc-muted)' }}>
+            Aquí tiene un resumen de su actividad de peticiones
+          </p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <StatCard
+            icon={InboxIcon}
+            label="Recibidas"
+            value="12"
+            description="Total de peticiones entrantes"
+            color="#1a73e8"
+            onClick={() => navigate('/requests/inbox')}
+          />
+          <StatCard
+            icon={PendingIcon}
+            label="Pendientes"
+            value="5"
+            description="Peticiones sin respuesta"
+            color="#ea8600"
+            onClick={() => navigate('/requests/inbox')}
+          />
+          <StatCard
+            icon={CheckIcon}
+            label="Respondidas"
+            value="7"
+            description="Peticiones finalizadas"
+            color="#34a853"
+            onClick={() => navigate('/requests/history')}
+          />
+          <StatCard
+            icon={SendIcon}
+            label="Enviadas"
+            value="3"
+            description="Peticiones que ha enviado"
+            color="var(--fesc-primary)"
+            onClick={() => navigate('/requests/sent')}
+          />
+        </div>
+
+        {/* Quick Actions & Recent Activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Quick Actions */}
+          <div
+            className="bg-white rounded-xl border p-4"
+            style={{ borderColor: 'var(--fesc-border-light)' }}
+          >
+            <h2 className="text-lg font-medium mb-4" style={{ color: 'var(--fesc-text)' }}>
+              Acciones rápidas
+            </h2>
+            <div className="space-y-1">
+              <QuickAction
+                icon={() => (
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                  </svg>
+                )}
+                label="Nueva petición"
+                onClick={() => navigate('/requests/new')}
+              />
+              <QuickAction
+                icon={InboxIcon}
+                label="Ver recibidas"
+                onClick={() => navigate('/requests/inbox')}
+              />
+              <QuickAction
+                icon={() => (
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+                  </svg>
+                )}
+                label="Ver gráficas"
+                onClick={() => navigate('/analytics/charts')}
+              />
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div
+            className="lg:col-span-2 bg-white rounded-xl border p-4"
+            style={{ borderColor: 'var(--fesc-border-light)' }}
+          >
+            <h2 className="text-lg font-medium mb-4" style={{ color: 'var(--fesc-text)' }}>
+              Actividad reciente
+            </h2>
+            <div className="space-y-3">
+              {[
+                { title: 'Nueva petición recibida', from: 'Secretaría Académica', time: 'Hace 10 min', unread: true },
+                { title: 'Petición respondida', from: 'Bienestar Universitario', time: 'Hace 2 horas', unread: false },
+                { title: 'Nueva petición recibida', from: 'Coordinación de Sistemas', time: 'Ayer', unread: false },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 p-3 rounded-lg transition-colors cursor-pointer hover:bg-[var(--fesc-hover)]"
+                >
+                  <div
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: item.unread ? 'var(--fesc-primary)' : 'transparent' }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate" style={{ color: 'var(--fesc-text)' }}>
+                      {item.title}
+                    </p>
+                    <p className="text-sm truncate" style={{ color: 'var(--fesc-muted)' }}>
+                      {item.from}
+                    </p>
+                  </div>
+                  <span className="text-xs flex-shrink-0" style={{ color: 'var(--fesc-muted)' }}>
+                    {item.time}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </AppShell>
+  )
+}
