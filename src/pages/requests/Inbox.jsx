@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import AppShell from '../../components/layout/AppShell'
 import RequestRow from '../../components/ui/RequestRow'
 import RequestDetail from '../../components/ui/RequestDetail'
-import { requestApi } from '../../api/requestApi'
+import { informApi } from '../../api/informApi'
 import { normalizeRequestList } from '../../utils/requestMapper'
 
 // Icons
@@ -28,9 +28,21 @@ export default function Inbox() {
     setLoading(true)
     setError('')
     try {
-      const data = await requestApi.listInbox()
-      const list = normalizeRequestList(data)
-      setRequests(list)
+      const [userData, areaData] = await Promise.all([
+        informApi.listByUserState('RECIBIDO'),
+        informApi.listByAreaState('RECIBIDO'),
+      ])
+
+      const list = [
+        ...normalizeRequestList(userData),
+        ...normalizeRequestList(areaData),
+      ]
+
+      const unique = Array.from(
+        new Map(list.map((item) => [item.id, item])).values()
+      )
+
+      setRequests(unique)
     } catch (err) {
       console.error('Error loading inbox:', err)
       setError('No se pudo cargar la bandeja de entrada.')

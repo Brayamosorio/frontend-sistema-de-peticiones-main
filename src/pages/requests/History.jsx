@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import AppShell from '../../components/layout/AppShell'
 import RequestRow from '../../components/ui/RequestRow'
 import RequestDetail from '../../components/ui/RequestDetail'
-import { requestApi } from '../../api/requestApi'
+import { informApi } from '../../api/informApi'
 import { normalizeRequestList } from '../../utils/requestMapper'
 
 // Icons
@@ -28,7 +28,7 @@ export default function History() {
     setLoading(true)
     setError('')
     try {
-      const data = await requestApi.listHistory()
+      const data = await informApi.listGeneral(0, 50)
       const list = normalizeRequestList(data)
       setRequests(list)
     } catch (err) {

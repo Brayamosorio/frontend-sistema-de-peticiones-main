@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import AppShell from '../../components/layout/AppShell'
 import { useNavigate } from 'react-router-dom'
-import { requestApi } from '../../api/requestApi'
+import { informApi } from '../../api/informApi'
 import { normalizeRequestList } from '../../utils/requestMapper'
 
 // Icons
@@ -71,23 +71,18 @@ export default function Dashboard() {
 
   const loadStats = useCallback(async () => {
     try {
-      const [inboxData, sentData, historyData] = await Promise.all([
-        requestApi.listInbox(),
-        requestApi.listSent(),
-        requestApi.listHistory(),
+      const [inboxData, pendingData, answeredData, sentData] = await Promise.all([
+        informApi.listByAreaState('RECIBIDO'),
+        informApi.listByAreaState('OBSERVADO'),
+        informApi.listByAreaState('APROBADO'),
+        informApi.listByUser(0, 50),
       ])
 
-      const inboxList = normalizeRequestList(inboxData)
-      const sentList = normalizeRequestList(sentData)
-      const historyList = normalizeRequestList(historyData)
-      const pendingCount = historyList.filter((item) => item.state === 'CREADA').length
-      const answeredCount = historyList.filter((item) => item.state && item.state !== 'CREADA').length
-
       setStats({
-        received: inboxList.length,
-        pending: pendingCount,
-        answered: answeredCount,
-        sent: sentList.length,
+        received: normalizeRequestList(inboxData).length,
+        pending: normalizeRequestList(pendingData).length,
+        answered: normalizeRequestList(answeredData).length,
+        sent: normalizeRequestList(sentData).length,
       })
     } catch (err) {
       console.error('Error loading stats:', err)

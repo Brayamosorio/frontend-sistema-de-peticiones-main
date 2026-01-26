@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import AppShell from '../../components/layout/AppShell'
 import ComposeModal from '../../components/ui/ComposeModal'
-import { requestApi } from '../../api/requestApi'
+import { informApi } from '../../api/informApi'
+import { sendInformApi } from '../../api/sendInformApi'
 
 function parseDestination(input) {
   const value = input.trim()
@@ -40,18 +41,23 @@ export default function NewRequest() {
 
     setSending(true)
     try {
+      const draft = await informApi.createDraft()
+      const informId = draft?.id
+
+      if (!informId) {
+        throw new Error('No se pudo crear el informe')
+      }
+
+      await informApi.completeInform(informId, {
+        title: data.subject,
+        description: data.body,
+        status: 'COMPLETADO',
+      })
+
       if (destination.type === 'area') {
-        await requestApi.createToArea({
-          title: data.subject,
-          description: data.body,
-          areaDestId: destination.id,
-        })
+        await sendInformApi.sendToArea(informId, [destination.id])
       } else {
-        await requestApi.createToUser({
-          title: data.subject,
-          description: data.body,
-          userDestId: destination.id,
-        })
+        await sendInformApi.sendToUser(informId, [destination.id])
       }
 
       alert('Peticion enviada correctamente.')
