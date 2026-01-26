@@ -31,7 +31,7 @@ const DeleteIcon = () => (
     </svg>
 )
 
-export default function ComposeModal({ isOpen, onClose, onSend, onMinimize }) {
+export default function ComposeModal({ isOpen, onClose, onSend, onMinimize, isSending = false }) {
     const [to, setTo] = useState('')
     const [subject, setSubject] = useState('')
     const [body, setBody] = useState('')
@@ -40,19 +40,22 @@ export default function ComposeModal({ isOpen, onClose, onSend, onMinimize }) {
 
     if (!isOpen) return null
 
-    const handleSend = () => {
+    const handleSend = async () => {
+        if (isSending) return
         if (!to || !subject || !body) {
             alert('Por favor complete todos los campos')
             return
         }
 
-        onSend?.({ to, subject, body })
-
-        // Reset form
-        setTo('')
-        setSubject('')
-        setBody('')
-        onClose?.()
+        try {
+            await onSend?.({ to, subject, body })
+            setTo('')
+            setSubject('')
+            setBody('')
+            onClose?.()
+        } catch (err) {
+            console.error('Error sending:', err)
+        }
     }
 
     const handleMinimize = () => {
@@ -116,7 +119,8 @@ export default function ComposeModal({ isOpen, onClose, onSend, onMinimize }) {
                                 type="text"
                                 value={to}
                                 onChange={(e) => setTo(e.target.value)}
-                                placeholder="Destinatario"
+                                placeholder="area:ID o user:ID"
+                                disabled={isSending}
                             />
                         </div>
                         <div className="field">
@@ -126,6 +130,7 @@ export default function ComposeModal({ isOpen, onClose, onSend, onMinimize }) {
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
                                 placeholder="Asunto de la petición"
+                                disabled={isSending}
                             />
                         </div>
                         <textarea
@@ -133,13 +138,14 @@ export default function ComposeModal({ isOpen, onClose, onSend, onMinimize }) {
                             onChange={(e) => setBody(e.target.value)}
                             placeholder="Escriba su petición aquí..."
                             style={{ minHeight: isExpanded ? 'calc(80vh - 200px)' : '200px' }}
+                            disabled={isSending}
                         />
                     </div>
 
                     {/* Footer */}
                     <div className="footer">
-                        <button className="send-btn" onClick={handleSend}>
-                            Enviar
+                        <button className="send-btn" onClick={handleSend} disabled={isSending}>
+                            {isSending ? 'Enviando...' : 'Enviar'}
                         </button>
                         <button className="action-btn" title="Adjuntar archivo">
                             <AttachIcon />

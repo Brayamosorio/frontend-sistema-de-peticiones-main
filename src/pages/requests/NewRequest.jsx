@@ -1,13 +1,66 @@
 import { useState } from 'react'
 import AppShell from '../../components/layout/AppShell'
 import ComposeModal from '../../components/ui/ComposeModal'
+import { requestApi } from '../../api/requestApi'
+
+function parseDestination(input) {
+  const value = input.trim()
+  if (!value) return null
+
+  const lower = value.toLowerCase()
+  if (lower.startsWith('area:')) {
+    const id = Number(value.slice(5).trim())
+    return Number.isNaN(id) ? null : { type: 'area', id }
+  }
+
+  if (lower.startsWith('user:')) {
+    const id = Number(value.slice(5).trim())
+    return Number.isNaN(id) ? null : { type: 'user', id }
+  }
+
+  const numeric = Number(value)
+  if (!Number.isNaN(numeric)) {
+    return { type: 'area', id: numeric }
+  }
+
+  return null
+}
 
 export default function NewRequest() {
   const [showModal, setShowModal] = useState(true)
+  const [sending, setSending] = useState(false)
 
-  const handleSend = (data) => {
-    console.log('Sending petition:', data)
-    alert('¡Petición enviada correctamente!')
+  const handleSend = async (data) => {
+    const destination = parseDestination(data.to)
+
+    if (!destination) {
+      alert('Use formato area:ID o user:ID (ej: area:3)')
+      return
+    }
+
+    setSending(true)
+    try {
+      if (destination.type === 'area') {
+        await requestApi.createToArea({
+          title: data.subject,
+          description: data.body,
+          areaDestId: destination.id,
+        })
+      } else {
+        await requestApi.createToUser({
+          title: data.subject,
+          description: data.body,
+          userDestId: destination.id,
+        })
+      }
+
+      alert('Peticion enviada correctamente.')
+    } catch (err) {
+      console.error('Error sending request:', err)
+      alert('No se pudo enviar la peticion.')
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -23,10 +76,10 @@ export default function NewRequest() {
             </svg>
           </div>
           <h2 className="text-xl font-medium mb-2" style={{ color: 'var(--fesc-text)' }}>
-            Nueva Petición
+            Nueva Peticion
           </h2>
           <p className="text-sm mb-6" style={{ color: 'var(--fesc-muted)' }}>
-            Redacte su petición utilizando el formulario que aparece en la esquina inferior derecha
+            Redacte su peticion utilizando el formulario que aparece en la esquina inferior derecha
           </p>
 
           {!showModal && (
@@ -46,6 +99,7 @@ export default function NewRequest() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onSend={handleSend}
+        isSending={sending}
       />
     </AppShell>
   )

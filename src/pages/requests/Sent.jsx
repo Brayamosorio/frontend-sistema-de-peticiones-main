@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import AppShell from '../../components/layout/AppShell'
 import RequestRow from '../../components/ui/RequestRow'
 import RequestDetail from '../../components/ui/RequestDetail'
+import { requestApi } from '../../api/requestApi'
+import { normalizeRequestList } from '../../utils/requestMapper'
 
 // Icons
 const RefreshIcon = () => (
@@ -16,60 +18,42 @@ const MoreIcon = () => (
   </svg>
 )
 
-// Mock data for sent petitions
-const mockSentData = [
-  {
-    id: 1,
-    sender: 'Para: Secretaría Académica',
-    email: 'secretaria.academica@fesc.edu.co',
-    subject: 'Solicitud de constancia de estudios',
-    preview: 'Cordialmente solicito una constancia de estudios para tramitar mi visa de estudiante...',
-    body: 'Estimados señores de Secretaría Académica,\n\nCordialmente solicito una constancia de estudios para tramitar mi visa de estudiante en la Embajada de España.\n\nMis datos son:\n- Nombre: [Tu nombre completo]\n- Documento: [Tu cédula]\n- Programa: Ingeniería de Sistemas\n- Semestre: 6to semestre\n\nRequiero que el documento incluya:\n- Fecha de inicio del programa\n- Fecha esperada de graduación\n- Estado actual (activo)\n- Intensidad horaria\n\nQuedo atento a cualquier información adicional que requieran.\n\nGracias por su atención.\n\nAtentamente,\n[Tu nombre]',
-    date: '11:30',
-    fullDate: '20 de enero de 2026, 11:30 AM',
-    unread: false,
-    starred: false,
-  },
-  {
-    id: 2,
-    sender: 'Para: Bienestar Universitario',
-    email: 'bienestar@fesc.edu.co',
-    subject: 'Solicitud de beca alimentaria',
-    preview: 'Por medio de la presente, me dirijo a ustedes para solicitar formalmente la beca alimentaria del programa...',
-    body: 'Estimados señores de Bienestar Universitario,\n\nPor medio de la presente, me dirijo a ustedes para solicitar formalmente la beca alimentaria del programa de apoyo estudiantil.\n\nActualmente me encuentro cursando el 4to semestre de Ingeniería de Sistemas y mi situación económica me impide cubrir los gastos de alimentación durante mi jornada académica.\n\nAdjunto los documentos requeridos:\n- Carta de solicitud\n- Fotocopia del documento de identidad\n- Certificado de ingresos\n- Recibo de servicios públicos\n\nAgradezco de antemano su atención y pronta respuesta.\n\nAtentamente,\n[Tu nombre]\nEstudiante de Ingeniería de Sistemas',
-    date: 'Ene 19',
-    fullDate: '19 de enero de 2026, 2:45 PM',
-    unread: false,
-    starred: true,
-  },
-  {
-    id: 3,
-    sender: 'Para: Coordinación de Sistemas',
-    email: 'sistemas@fesc.edu.co',
-    subject: 'Reporte de falla en plataforma',
-    preview: 'Reporto que la plataforma de notas presenta errores al intentar cargar las calificaciones del tercer corte...',
-    body: 'Estimado equipo de Soporte Técnico,\n\nMe permito reportar una falla en la plataforma académica:\n\nDescripción del problema:\n- La plataforma de notas presenta errores al intentar cargar las calificaciones del tercer corte\n- El error aparece: "Error 500 - Internal Server Error"\n- El problema ocurre desde el día 15 de enero\n\nInformación adicional:\n- Navegador: Google Chrome 120\n- Sistema operativo: Windows 11\n- He intentado desde diferentes redes sin éxito\n- He limpiado caché y cookies\n\nQuedo atento a su pronta solución.\n\nGracias,\n[Tu nombre]',
-    date: 'Ene 15',
-    fullDate: '15 de enero de 2026, 4:20 PM',
-    unread: false,
-    starred: false,
-  },
-]
-
 export default function Sent() {
-  const [requests, setRequests] = useState(mockSentData)
+  const [requests, setRequests] = useState([])
   const [selectedRequest, setSelectedRequest] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const loadSent = useCallback(async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const data = await requestApi.listSent()
+      const list = normalizeRequestList(data)
+      setRequests(list)
+    } catch (err) {
+      console.error('Error loading sent:', err)
+      setError('No se pudo cargar enviadas.')
+      setRequests([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadSent()
+  }, [loadSent])
 
   const handleSelect = (id, selected) => {
     console.log('Selected:', id, selected)
   }
 
   const handleStar = (id, starred) => {
-    setRequests(prev => prev.map(r => r.id === id ? { ...r, starred } : r))
+    setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, starred } : r)))
   }
 
   const handleClick = (id) => {
-    const request = requests.find(r => r.id === id)
+    const request = requests.find((r) => r.id === id)
     setSelectedRequest(request)
   }
 
@@ -92,22 +76,34 @@ export default function Sent() {
               type="checkbox"
               className="w-[18px] h-[18px] cursor-pointer accent-[var(--fesc-primary)]"
             />
-            <button className="action-btn" title="Actualizar">
+            <button className="action-btn" title="Actualizar" onClick={loadSent}>
               <RefreshIcon />
             </button>
-            <button className="action-btn" title="Más opciones">
+            <button className="action-btn" title="Mas opciones">
               <MoreIcon />
             </button>
 
             <div className="flex-1" />
 
             <span className="text-sm" style={{ color: 'var(--fesc-muted)' }}>
-              1-{requests.length} de {requests.length}
+              {requests.length === 0 ? '0' : `1-${requests.length}`} de {requests.length}
             </span>
           </div>
 
+          {error && (
+            <div className="px-4 py-2 text-sm bg-yellow-50 text-yellow-800 border-b" style={{ borderColor: 'var(--fesc-border)' }}>
+              {error}
+            </div>
+          )}
+
           {/* Request List */}
           <div className="flex-1 overflow-y-auto bg-white">
+            {loading && requests.length === 0 && (
+              <div className="flex items-center justify-center h-40 text-sm" style={{ color: 'var(--fesc-muted)' }}>
+                Cargando...
+              </div>
+            )}
+
             {requests.map((request) => (
               <RequestRow
                 key={request.id}
@@ -118,13 +114,13 @@ export default function Sent() {
               />
             ))}
 
-            {requests.length === 0 && (
+            {!loading && requests.length === 0 && (
               <div className="flex flex-col items-center justify-center h-64 text-center">
                 <p className="text-lg font-medium" style={{ color: 'var(--fesc-text)' }}>
                   No hay peticiones enviadas
                 </p>
                 <p className="text-sm mt-2" style={{ color: 'var(--fesc-muted)' }}>
-                  Las peticiones que envíe aparecerán aquí
+                  Las peticiones que envie apareceran aqui
                 </p>
               </div>
             )}

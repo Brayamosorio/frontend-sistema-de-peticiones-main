@@ -1,0 +1,39 @@
+#! sicier-bd-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: sicier-bd
+    namespace: frontend-sistema-de-peticiones-main
+    labels:
+        com.docker.compose.project: frontend-sistema-de-peticiones-main
+        com.docker.compose.service: sicier-bd
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: frontend-sistema-de-peticiones-main
+            com.docker.compose.service: sicier-bd
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: frontend-sistema-de-peticiones-main
+                com.docker.compose.service: sicier-bd
+                com.docker.compose.network.sicier_net: "true"
+        spec:
+            containers:
+                - name: sicier-bd
+                  image: postgres
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: POSTGRES_DB
+                      value: "sicier"
+                    - name: POSTGRES_PASSWORD
+                      value: "s1Ci3rbd"
+                    - name: POSTGRES_USER
+                      value: "postgresicier"
+                  ports:
+                    - name: sicier-bd-5432
+                      containerPort: 5432

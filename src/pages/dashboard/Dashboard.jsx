@@ -1,5 +1,8 @@
+import { useCallback, useEffect, useState } from 'react'
 import AppShell from '../../components/layout/AppShell'
 import { useNavigate } from 'react-router-dom'
+import { requestApi } from '../../api/requestApi'
+import { normalizeRequestList } from '../../utils/requestMapper'
 
 // Icons
 const InboxIcon = () => (
@@ -64,6 +67,36 @@ function QuickAction({ icon: Icon, label, onClick }) {
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const [stats, setStats] = useState({ received: 0, pending: 0, answered: 0, sent: 0 })
+
+  const loadStats = useCallback(async () => {
+    try {
+      const [inboxData, sentData, historyData] = await Promise.all([
+        requestApi.listInbox(),
+        requestApi.listSent(),
+        requestApi.listHistory(),
+      ])
+
+      const inboxList = normalizeRequestList(inboxData)
+      const sentList = normalizeRequestList(sentData)
+      const historyList = normalizeRequestList(historyData)
+      const pendingCount = historyList.filter((item) => item.state === 'CREADA').length
+      const answeredCount = historyList.filter((item) => item.state && item.state !== 'CREADA').length
+
+      setStats({
+        received: inboxList.length,
+        pending: pendingCount,
+        answered: answeredCount,
+        sent: sentList.length,
+      })
+    } catch (err) {
+      console.error('Error loading stats:', err)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadStats()
+  }, [loadStats])
 
   return (
     <AppShell>
@@ -71,10 +104,10 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-2xl font-medium mb-2" style={{ color: 'var(--fesc-text)' }}>
-            Buenos días 👋
+            Buenos dias
           </h1>
           <p style={{ color: 'var(--fesc-muted)' }}>
-            Aquí tiene un resumen de su actividad de peticiones
+            Aqui tiene un resumen de su actividad de peticiones
           </p>
         </div>
 
@@ -83,7 +116,7 @@ export default function Dashboard() {
           <StatCard
             icon={InboxIcon}
             label="Recibidas"
-            value="12"
+            value={stats.received}
             description="Total de peticiones entrantes"
             color="#1a73e8"
             onClick={() => navigate('/requests/inbox')}
@@ -91,7 +124,7 @@ export default function Dashboard() {
           <StatCard
             icon={PendingIcon}
             label="Pendientes"
-            value="5"
+            value={stats.pending}
             description="Peticiones sin respuesta"
             color="#ea8600"
             onClick={() => navigate('/requests/inbox')}
@@ -99,7 +132,7 @@ export default function Dashboard() {
           <StatCard
             icon={CheckIcon}
             label="Respondidas"
-            value="7"
+            value={stats.answered}
             description="Peticiones finalizadas"
             color="#34a853"
             onClick={() => navigate('/requests/history')}
@@ -107,7 +140,7 @@ export default function Dashboard() {
           <StatCard
             icon={SendIcon}
             label="Enviadas"
-            value="3"
+            value={stats.sent}
             description="Peticiones que ha enviado"
             color="var(--fesc-primary)"
             onClick={() => navigate('/requests/sent')}
@@ -122,7 +155,7 @@ export default function Dashboard() {
             style={{ borderColor: 'var(--fesc-border-light)' }}
           >
             <h2 className="text-lg font-medium mb-4" style={{ color: 'var(--fesc-text)' }}>
-              Acciones rápidas
+              Acciones rapidas
             </h2>
             <div className="space-y-1">
               <QuickAction
@@ -131,7 +164,7 @@ export default function Dashboard() {
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                   </svg>
                 )}
-                label="Nueva petición"
+                label="Nueva peticion"
                 onClick={() => navigate('/requests/new')}
               />
               <QuickAction
@@ -145,7 +178,7 @@ export default function Dashboard() {
                     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
                   </svg>
                 )}
-                label="Ver gráficas"
+                label="Ver graficas"
                 onClick={() => navigate('/analytics/charts')}
               />
             </div>
@@ -161,9 +194,9 @@ export default function Dashboard() {
             </h2>
             <div className="space-y-3">
               {[
-                { title: 'Nueva petición recibida', from: 'Secretaría Académica', time: 'Hace 10 min', unread: true },
-                { title: 'Petición respondida', from: 'Bienestar Universitario', time: 'Hace 2 horas', unread: false },
-                { title: 'Nueva petición recibida', from: 'Coordinación de Sistemas', time: 'Ayer', unread: false },
+                { title: 'Nueva peticion recibida', from: 'Secretaria Academica', time: 'Hace 10 min', unread: true },
+                { title: 'Peticion respondida', from: 'Bienestar Universitario', time: 'Hace 2 horas', unread: false },
+                { title: 'Nueva peticion recibida', from: 'Coordinacion de Sistemas', time: 'Ayer', unread: false },
               ].map((item, i) => (
                 <div
                   key={i}

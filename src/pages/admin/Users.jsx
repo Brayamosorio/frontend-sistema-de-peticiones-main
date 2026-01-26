@@ -1,16 +1,22 @@
 import { useState } from 'react'
 import AppShell from '../../components/layout/AppShell'
+import { authApi } from '../../api/authApi'
+
+const initialForm = {
+  nombre: '',
+  cedula: '',
+  email: '',
+  usuario: '',
+  contrasena: '',
+  rol: '',
+  dependencia: '',
+  cargo: '',
+}
 
 export default function Users() {
-  const [form, setForm] = useState({
-    nombre: '',
-    cedula: '',
-    email: '',
-    rol: '',
-    dependencia: '',
-    cargo: '',
-    sexo: '',
-  })
+  const [form, setForm] = useState(initialForm)
+  const [loading, setLoading] = useState(false)
+  const [mensaje, setMensaje] = useState('')
 
   function handleChange(e) {
     setForm({
@@ -19,26 +25,47 @@ export default function Users() {
     })
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
 
     if (Object.values(form).some((v) => v === '')) {
-      alert('Por favor complete todos los campos')
+      setMensaje('Por favor complete todos los campos')
       return
     }
 
-    console.log('Usuario creado:', form)
-    alert('Usuario creado correctamente')
+    setLoading(true)
+    setMensaje('')
 
-    setForm({
-      nombre: '',
-      cedula: '',
-      email: '',
-      rol: '',
-      dependencia: '',
-      cargo: '',
-      sexo: '',
-    })
+    try {
+      const datosUsuario = {
+        firstName: form.nombre.split(' ')[0],
+        lastName: form.nombre.split(' ').slice(1).join(' ') || form.nombre,
+        institutionalEmail: form.email,
+        identifier: parseInt(form.cedula, 10),
+        phone: 1234567890,
+        username: form.usuario,
+        password: form.contrasena,
+        area: form.dependencia,
+        roleRequest: {
+          roleList: [form.rol === 'admin' ? 'ADMIN' : 'FUNC'],
+        },
+      }
+
+      const response = await authApi.register(datosUsuario)
+
+      if (response) {
+        setMensaje('Usuario creado correctamente')
+        setTimeout(() => {
+          setForm(initialForm)
+          setMensaje('')
+        }, 2000)
+      }
+    } catch (error) {
+      setMensaje(error.response?.data?.message || 'Error al crear el usuario')
+      console.error('Error:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputStyles = {
@@ -56,7 +83,7 @@ export default function Users() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-medium mb-2" style={{ color: 'var(--fesc-text)' }}>
-            Gestión de usuarios
+            Gestion de usuarios
           </h1>
           <p style={{ color: 'var(--fesc-muted)' }}>
             Cree y administre los usuarios del sistema
@@ -72,6 +99,18 @@ export default function Users() {
             Crear nuevo usuario
           </h2>
 
+          {mensaje && (
+            <div
+              className={`mb-6 rounded-lg px-4 py-3 text-sm ${
+                mensaje.includes('correctamente')
+                  ? 'bg-green-50 text-green-700'
+                  : 'bg-red-50 text-red-700'
+              }`}
+            >
+              {mensaje}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
@@ -84,13 +123,13 @@ export default function Users() {
                   onChange={handleChange}
                   className="w-full rounded-lg border px-4 py-3 outline-none transition-colors focus:border-[var(--fesc-primary)]"
                   style={inputStyles}
-                  placeholder="Ej: Juan Pérez"
+                  placeholder="Ej: Juan Perez"
                 />
               </div>
 
               <div>
                 <label className="mb-2 block text-sm font-medium" style={labelStyles}>
-                  Cédula
+                  Cedula
                 </label>
                 <input
                   name="cedula"
@@ -104,7 +143,7 @@ export default function Users() {
 
               <div>
                 <label className="mb-2 block text-sm font-medium" style={labelStyles}>
-                  Correo electrónico
+                  Correo electronico
                 </label>
                 <input
                   type="email"
@@ -114,6 +153,35 @@ export default function Users() {
                   className="w-full rounded-lg border px-4 py-3 outline-none transition-colors focus:border-[var(--fesc-primary)]"
                   style={inputStyles}
                   placeholder="correo@fesc.edu.co"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium" style={labelStyles}>
+                  Usuario
+                </label>
+                <input
+                  name="usuario"
+                  value={form.usuario}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border px-4 py-3 outline-none transition-colors focus:border-[var(--fesc-primary)]"
+                  style={inputStyles}
+                  placeholder="Ej: juanperez"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium" style={labelStyles}>
+                  Contrasena
+                </label>
+                <input
+                  type="password"
+                  name="contrasena"
+                  value={form.contrasena}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border px-4 py-3 outline-none transition-colors focus:border-[var(--fesc-primary)]"
+                  style={inputStyles}
+                  placeholder="Ingrese contrasena"
                 />
               </div>
 
@@ -144,7 +212,7 @@ export default function Users() {
                   onChange={handleChange}
                   className="w-full rounded-lg border px-4 py-3 outline-none transition-colors focus:border-[var(--fesc-primary)]"
                   style={inputStyles}
-                  placeholder="Ej: Secretaría Académica"
+                  placeholder="Ej: Secretaria Academica"
                 />
               </div>
 
@@ -161,30 +229,12 @@ export default function Users() {
                   placeholder="Ej: Coordinador"
                 />
               </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium" style={labelStyles}>
-                  Sexo
-                </label>
-                <select
-                  name="sexo"
-                  value={form.sexo}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border px-4 py-3 outline-none transition-colors focus:border-[var(--fesc-primary)]"
-                  style={inputStyles}
-                >
-                  <option value="">Seleccione</option>
-                  <option value="M">Masculino</option>
-                  <option value="F">Femenino</option>
-                  <option value="O">Otro</option>
-                </select>
-              </div>
             </div>
 
             <div className="mt-8 flex justify-end gap-3">
               <button
                 type="button"
-                onClick={() => setForm({ nombre: '', cedula: '', email: '', rol: '', dependencia: '', cargo: '', sexo: '' })}
+                onClick={() => setForm(initialForm)}
                 className="rounded-lg px-6 py-3 font-medium transition-colors hover:bg-[var(--fesc-hover)]"
                 style={{ color: 'var(--fesc-text)' }}
               >
@@ -192,10 +242,11 @@ export default function Users() {
               </button>
               <button
                 type="submit"
-                className="rounded-lg px-6 py-3 font-medium text-white transition-colors hover:opacity-90"
+                className="rounded-lg px-6 py-3 font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
                 style={{ background: 'var(--fesc-primary)' }}
+                disabled={loading}
               >
-                Crear usuario
+                {loading ? 'Creando usuario...' : 'Crear usuario'}
               </button>
             </div>
           </form>

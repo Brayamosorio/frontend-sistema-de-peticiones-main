@@ -1,0 +1,18 @@
+#! sicier-app-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: sicier-app
+    namespace: frontend-sistema-de-peticiones-main
+    labels:
+        com.docker.compose.project: frontend-sistema-de-peticiones-main
+        com.docker.compose.service: sicier-app
+spec:
+    selector:
+        com.docker.compose.project: frontend-sistema-de-peticiones-main
+        com.docker.compose.service: sicier-app
+    ports:
+        - name: sicier-app-8080
+          port: 8080
+          targetPort: sicier-app-8080

@@ -1,0 +1,43 @@
+#! sicier-app-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: sicier-app
+    namespace: frontend-sistema-de-peticiones-main
+    labels:
+        com.docker.compose.project: frontend-sistema-de-peticiones-main
+        com.docker.compose.service: sicier-app
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: frontend-sistema-de-peticiones-main
+            com.docker.compose.service: sicier-app
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: frontend-sistema-de-peticiones-main
+                com.docker.compose.service: sicier-app
+                com.docker.compose.network.sicier_net: "true"
+        spec:
+            containers:
+                - name: sicier-app
+                  image: j3ffer/sicier
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: DATASOURCE_PASSWORD
+                      value: "s1Ci3rbd"
+                    - name: DATASOURCE_URL
+                      value: "jdbc:postgresql://sicier-bd:5432/sicier"
+                    - name: DATASOURCE_USERNAME
+                      value: "postgresicier"
+                    - name: JWT_PRIVATE_KEY
+                      value: "59a133e84ff855a20651266f97be4c6c3d263d9201ac5fd73010095a95810e4e"
+                    - name: SPRING_PROFILES_ACTIVE
+                      value: "prod"
+                  ports:
+                    - name: sicier-app-8080
+                      containerPort: 8080

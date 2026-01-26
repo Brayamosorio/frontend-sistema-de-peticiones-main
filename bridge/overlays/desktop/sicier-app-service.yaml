@@ -1,0 +1,11 @@
+# check if there is at least one published port
+
+#! sicier-app-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: sicier-app-published
+    namespace: frontend-sistema-de-peticiones-main
+spec:
+    type: LoadBalancer
