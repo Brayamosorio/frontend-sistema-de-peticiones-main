@@ -1,27 +1,37 @@
 services:
-  sicier-bd:
-    image: postgres
+  db:
+    image: postgres:16
+    container_name: sicier-db
     environment:
-      - POSTGRES_USER=postgresicier
-      - POSTGRES_PASSWORD=s1Ci3rbd
-      - POSTGRES_DB=sicier
-    networks:
-      - sicier_net
+      POSTGRES_USER: sicier
+      POSTGRES_PASSWORD: sicier
+      POSTGRES_DB: sicier
+    ports:
+      - "5432:5432"
+    volumes:
+      - sicier_data:/var/lib/postgresql/data
 
-  sicier-app:
-    image: j3ffer/sicier
+  backend:
+    image: brayam223/sicier:latest
+    container_name: sicier-backend
+    depends_on:
+      - db
+    environment:
+      DATASOURCE_URL: jdbc:postgresql://db:5432/sicier
+      DATASOURCE_USERNAME: sicier
+      DATASOURCE_PASSWORD: sicier
     ports:
       - "8080:8080"
-    environment:
-      - DATASOURCE_USERNAME=postgresicier
-      - DATASOURCE_PASSWORD=s1Ci3rbd
-      - DATASOURCE_URL=jdbc:postgresql://sicier-bd:5432/sicier
-      - SPRING_PROFILES_ACTIVE=prod
-      - JWT_PRIVATE_KEY=59a133e84ff855a20651266f97be4c6c3d263d9201ac5fd73010095a95810e4e
-    depends_on:
-      - sicier-bd
-    networks:
-      - sicier_net
 
-networks:
-  sicier_net:
+  frontend:
+    image: brayam223/peticiones-frontend:latest
+    container_name: sicier-frontend
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://backend:8080/sicier/api/v1
+    ports:
+      - "5173:80"
+
+volumes:
+  sicier_data:
