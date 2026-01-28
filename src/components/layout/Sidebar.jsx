@@ -33,6 +33,12 @@ const UsersIcon = () => (
   </svg>
 )
 
+const ApprovalIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M9 16.17l-3.5-3.5-1.41 1.41L9 19 20.5 7.5l-1.41-1.41z"/>
+  </svg>
+)
+
 const DashboardIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor">
     <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
@@ -58,6 +64,7 @@ export default function Sidebar({ collapsed, onToggle }) {
   ]
 
   if (role === 'admin') {
+    navItems.push({ label: 'Aprobaciones', to: '/requests/approvals', icon: ApprovalIcon })
     navItems.push({ label: 'Usuarios', to: '/admin/users', icon: UsersIcon })
   }
 

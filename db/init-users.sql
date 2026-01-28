@@ -159,6 +159,111 @@ SELECT nextval('employee_seq'), 'Admin', 'Docentes', 3000000113, 2013,
   true, true, true, true, (SELECT id FROM area WHERE name='Representante de Docentes' LIMIT 1)
 WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='admindocentes@fesc.edu.co');
 
+-- Usuarios FUNC por area (username fun + email, password 123)
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Rectora', 3100000101, 3001,
+  'funrectora@fesc.edu.co', 'rectora@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Rectora' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funrectora@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Vicerrector', 3100000102, 3002,
+  'funvicerrectoracademico@fesc.edu.co', 'vicerrectoracademico@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Vicerrector Académico' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funvicerrectoracademico@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Extension', 3100000103, 3003,
+  'funextension@fesc.edu.co', 'extension@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Directora Unidad de Extensión y Proyección Social' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funextension@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Investigaciones', 3100000104, 3004,
+  'funinvestigaciones@fesc.edu.co', 'investigaciones@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Directora Unidad de Investigaciones' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funinvestigaciones@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Calidad', 3100000105, 3005,
+  'funcalidad@fesc.edu.co', 'calidad@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Directora Unidad de Aseguramiento de la Calidad' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funcalidad@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Software', 3100000106, 3006,
+  'funsoftware@fesc.edu.co', 'software@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Director Programa Ingeniería de Software' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funsoftware@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Diseno', 3100000107, 3007,
+  'fundisenografico@fesc.edu.co', 'disenografico@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Director Programa Diseño Gráfico' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='fundisenografico@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Moda', 3100000108, 3008,
+  'funmoda@fesc.edu.co', 'moda@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Directora Programa Administración de Negocios de la Moda' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funmoda@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Financiera', 3100000109, 3009,
+  'funfinanciera@fesc.edu.co', 'financiera@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Director Programa Administración Financiera' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funfinanciera@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'NegociosDistancia', 3100000110, 3010,
+  'funnegociosdistancia@fesc.edu.co', 'negociosdistancia@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Director Programa Administración de Negocios Internacionales - Distancia' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funnegociosdistancia@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Turistica', 3100000111, 3011,
+  'funturistica@fesc.edu.co', 'turistica@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Directora Programa Administración Turística y Hotelera' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funturistica@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'NegociosPresencial', 3100000112, 3012,
+  'funnegociospresencial@fesc.edu.co', 'negociospresencial@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Directora Programa Administración de Negocios Internacionales - Presencial' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='funnegociospresencial@fesc.edu.co');
+
+INSERT INTO employee
+  (id, first_name, last_name, phone, identifier, username, institutional_email, password,
+   enabled, account_non_expired, account_non_locked, credentials_non_expired, area_id)
+SELECT nextval('employee_seq'), 'Func', 'Docentes', 3100000113, 3013,
+  'fundocentes@fesc.edu.co', 'docentes@fesc.edu.co', crypt('123', gen_salt('bf', 10)),
+  true, true, true, true, (SELECT id FROM area WHERE name='Representante de Docentes' LIMIT 1)
+WHERE NOT EXISTS (SELECT 1 FROM employee WHERE username='fundocentes@fesc.edu.co');
+
 -- Asignar rol ADMIN a todos
 INSERT INTO employee_roles (employee_id, role_id)
 SELECT e.id, r.id
@@ -190,6 +295,31 @@ INSERT INTO employee_roles (employee_id, role_id)
 SELECT e.id, r.id
 FROM employee e, roles r
 WHERE r.role_name='FUNC' AND e.username='brayan'
+AND NOT EXISTS (
+  SELECT 1 FROM employee_roles er
+  WHERE er.employee_id = e.id AND er.role_id = r.id
+);
+
+-- Asignar rol FUNC a los usuarios fun
+INSERT INTO employee_roles (employee_id, role_id)
+SELECT e.id, r.id
+FROM employee e, roles r
+WHERE r.role_name='FUNC'
+AND e.username IN (
+  'funrectora@fesc.edu.co',
+  'funvicerrectoracademico@fesc.edu.co',
+  'funextension@fesc.edu.co',
+  'funinvestigaciones@fesc.edu.co',
+  'funcalidad@fesc.edu.co',
+  'funsoftware@fesc.edu.co',
+  'fundisenografico@fesc.edu.co',
+  'funmoda@fesc.edu.co',
+  'funfinanciera@fesc.edu.co',
+  'funnegociosdistancia@fesc.edu.co',
+  'funturistica@fesc.edu.co',
+  'funnegociospresencial@fesc.edu.co',
+  'fundocentes@fesc.edu.co'
+)
 AND NOT EXISTS (
   SELECT 1 FROM employee_roles er
   WHERE er.employee_id = e.id AND er.role_id = r.id

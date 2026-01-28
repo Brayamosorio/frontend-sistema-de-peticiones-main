@@ -8,6 +8,7 @@ import NewRequest from '../pages/requests/NewRequest'
 import Inbox from '../pages/requests/Inbox'
 import Sent from '../pages/requests/Sent'
 import History from '../pages/requests/History'
+import Approvals from '../pages/requests/Approvals'
 import Charts from '../pages/analytics/Charts'
 import Users from '../pages/admin/Users'
 
@@ -56,6 +57,14 @@ export default function AppRoutes() {
           <ProtectedRoute>
             <History />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/requests/approvals"
+        element={
+          <AdminRoute>
+            <Approvals />
+          </AdminRoute>
         }
       />
       <Route

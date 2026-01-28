@@ -39,7 +39,18 @@ export default function Login() {
   async function handleAuthSuccess(response, username) {
     if (!response?.jwt) return false
 
-    const isAdmin = username === 'admin' || username === 'admin@fesc.edu.co'
+    let roleFromToken = 'user'
+    try {
+      const payload = JSON.parse(atob(response.jwt.split('.')[1]))
+      const permissions = payload?.permissions || ''
+      if (permissions.includes('ROLE_ADMIN')) {
+        roleFromToken = 'admin'
+      }
+    } catch {
+      // ignore parsing errors, fallback below
+    }
+
+    const isAdmin = roleFromToken === 'admin' || username === 'admin' || username === 'admin@fesc.edu.co'
     setAuth({
       token: response.jwt,
       role: isAdmin ? 'admin' : 'user',
