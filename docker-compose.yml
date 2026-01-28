@@ -10,6 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - sicier_data:/var/lib/postgresql/data
+      - ./db/init-users.sql:/docker-entrypoint-initdb.d/01-init-users.sql:ro
 
   backend:
     image: brayam223/sicier:latest

@@ -22,6 +22,7 @@ $env:VITE_API_URL="http://localhost:8080/sicier/api/v1"
 docker build -t brayam223/peticiones-frontend:latest .
 docker push brayam223/peticiones-frontend:latest
 ```
+- La primera vez que se levanta la DB se crean usuarios y areas base desde `db/init-users.sql`.
 
 ## Opcion B: Desarrollo local (frontend + backend + DB)
 Requiere ambos repos en el mismo directorio:
