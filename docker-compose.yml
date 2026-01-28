@@ -17,9 +17,15 @@ services:
     depends_on:
       - db
     environment:
-      DATASOURCE_URL: jdbc:postgresql://db:5432/sicier
-      DATASOURCE_USERNAME: sicier
-      DATASOURCE_PASSWORD: sicier
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sicier
+      SPRING_DATASOURCE_USERNAME: sicier
+      SPRING_DATASOURCE_PASSWORD: sicier
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_SECURITY_JWT_PRIVATE_KEY: super-secret-key-change-me
+      SPRING_SECURITY_USER_GENERATOR: sicier-app
+      SERVER_ERROR_INCLUDE_MESSAGE: always
+      SERVER_ERROR_INCLUDE_EXCEPTION: "true"
+      SERVER_ERROR_INCLUDE_STACKTRACE: always
     ports:
       - "8080:8080"
 
